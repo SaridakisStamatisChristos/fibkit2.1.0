@@ -41,6 +41,10 @@ def test_errors_and_guards():
     with pytest.raises(FibonacciError): eng.fibonacci(True)
     with pytest.raises(FibonacciError):
         gen=eng.fibonacci_sequence(6); next(gen)
+    with pytest.raises(FibonacciError):
+        eng.generate_sequence("fast_doubling", 6)
+    with pytest.raises(FibonacciError):
+        eng.generate_sequence("binet", 6)
     with pytest.raises(FibonacciError): eng.fibonacci_binet(10**9)
 
 def test_accepts_indexable_integers_and_rejects_bool_modulus():
