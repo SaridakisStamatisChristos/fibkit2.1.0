@@ -90,6 +90,10 @@ class FibonacciEngine:
         for _ in range(limit): yield a; a,b=b,a+b
     def generate_sequence(self,method:str="iterative",limit:int=20)->List[int]:
         limit=self._require_non_negative(limit, desc="Limit")
+        if limit>self.config.sequence_limit:
+            raise FibonacciError(
+                f"Sequence limit {self.config.sequence_limit} exceeded: {limit}"
+            )
         if method=="iterative": return list(self.fibonacci_sequence(limit))
         elif method=="fast_doubling": return [self._fast_doubling(i)[0] for i in range(limit)]
         elif method=="binet":
