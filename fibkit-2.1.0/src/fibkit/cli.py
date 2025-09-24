@@ -65,5 +65,5 @@ def main() -> None:
                 fn = eng.fibonacci(n)
                 ms = (time.time()-t0)*1000
                 print(f"{n}\t{len(str(fn))}\t{ms:.3f}")
-    except FibonacciError as e:
+    except (FibonacciError, ValueError) as e:
         parser.error(str(e))

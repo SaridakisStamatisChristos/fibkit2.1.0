@@ -1,6 +1,6 @@
 import random, pytest
 from fibkit.core import FibonacciEngine, FibonacciConfig, FibonacciError
-from fibkit.linrec import linrec2, linrec_k
+from fibkit.linrec import linrec2, linrec_k, linrec2_array
 
 def test_known_values():
     eng=FibonacciEngine()
@@ -43,6 +43,20 @@ def test_errors_and_guards():
         gen=eng.fibonacci_sequence(6); next(gen)
     with pytest.raises(FibonacciError): eng.fibonacci_binet(10**9)
 
+def test_accepts_indexable_integers_and_rejects_bool_modulus():
+    class Indexable:
+        def __init__(self, value): self.value=value
+        def __index__(self): return self.value
+
+    eng=FibonacciEngine()
+    assert eng.fibonacci(Indexable(10))==55
+    assert list(eng.fibonacci_sequence(Indexable(5)))==[0,1,1,2,3]
+    assert eng.fibonacci_mod(Indexable(8), Indexable(5))==eng.fibonacci_mod(8,5)
+    with pytest.raises(FibonacciError): eng.fibonacci(Indexable(-1))
+    with pytest.raises(FibonacciError): eng.fibonacci_mod(5, True)
+    with pytest.raises(FibonacciError): eng.generate_sequence(limit=True)
+    with pytest.raises(FibonacciError): FibonacciEngine().pisano_period(True)
+
 def test_big_perf_sanity():
     eng=FibonacciEngine(); f=eng.fibonacci(10_000)
     assert len(str(f))>=2090
@@ -62,3 +76,14 @@ def test_linrec_k_general():
         seq.append(seq[-1]+seq[-2]+seq[-3])
     for n in range(0,20):
         assert linrec_k(n,coeffs,init)==seq[n]
+
+def test_linrec_validates_inputs():
+    with pytest.raises(ValueError): linrec2(-1,0,1,1,1)
+    with pytest.raises(ValueError): linrec2(True,0,1,1,1)
+    with pytest.raises(ValueError): linrec2(2,0,1,True,1)
+    with pytest.raises(ValueError): linrec_k(-1,[1,1],[0,1])
+    with pytest.raises(ValueError): linrec_k(True,[1,1],[0,1])
+    with pytest.raises(ValueError): linrec_k(3,[1,True],[0,1])
+    with pytest.raises(ValueError): linrec_k(3,[1,1],[0,1,2])
+    with pytest.raises(ValueError): linrec_k(0,[],[])
+    with pytest.raises(ValueError): linrec2_array([0,True],0,1,1,1)
