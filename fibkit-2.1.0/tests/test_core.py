@@ -43,6 +43,20 @@ def test_errors_and_guards():
         gen=eng.fibonacci_sequence(6); next(gen)
     with pytest.raises(FibonacciError): eng.fibonacci_binet(10**9)
 
+def test_accepts_indexable_integers_and_rejects_bool_modulus():
+    class Indexable:
+        def __init__(self, value): self.value=value
+        def __index__(self): return self.value
+
+    eng=FibonacciEngine()
+    assert eng.fibonacci(Indexable(10))==55
+    assert list(eng.fibonacci_sequence(Indexable(5)))==[0,1,1,2,3]
+    assert eng.fibonacci_mod(Indexable(8), Indexable(5))==eng.fibonacci_mod(8,5)
+    with pytest.raises(FibonacciError): eng.fibonacci(Indexable(-1))
+    with pytest.raises(FibonacciError): eng.fibonacci_mod(5, True)
+    with pytest.raises(FibonacciError): eng.generate_sequence(limit=True)
+    with pytest.raises(FibonacciError): FibonacciEngine().pisano_period(True)
+
 def test_big_perf_sanity():
     eng=FibonacciEngine(); f=eng.fibonacci(10_000)
     assert len(str(f))>=2090
