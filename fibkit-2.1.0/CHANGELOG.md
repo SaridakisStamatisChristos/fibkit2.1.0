@@ -1,0 +1,1 @@
+# Changelog\n\n## 2.1.0 — Linear recurrences & Benchmarks (2025-09-24)\n- Added linrec modules and CLI.\n
