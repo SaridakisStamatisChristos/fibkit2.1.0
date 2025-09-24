@@ -1,6 +1,6 @@
 import random, pytest
 from fibkit.core import FibonacciEngine, FibonacciConfig, FibonacciError
-from fibkit.linrec import linrec2, linrec_k
+from fibkit.linrec import linrec2, linrec_k, linrec2_array
 
 def test_known_values():
     eng=FibonacciEngine()
@@ -76,3 +76,14 @@ def test_linrec_k_general():
         seq.append(seq[-1]+seq[-2]+seq[-3])
     for n in range(0,20):
         assert linrec_k(n,coeffs,init)==seq[n]
+
+def test_linrec_validates_inputs():
+    with pytest.raises(ValueError): linrec2(-1,0,1,1,1)
+    with pytest.raises(ValueError): linrec2(True,0,1,1,1)
+    with pytest.raises(ValueError): linrec2(2,0,1,True,1)
+    with pytest.raises(ValueError): linrec_k(-1,[1,1],[0,1])
+    with pytest.raises(ValueError): linrec_k(True,[1,1],[0,1])
+    with pytest.raises(ValueError): linrec_k(3,[1,True],[0,1])
+    with pytest.raises(ValueError): linrec_k(3,[1,1],[0,1,2])
+    with pytest.raises(ValueError): linrec_k(0,[],[])
+    with pytest.raises(ValueError): linrec2_array([0,True],0,1,1,1)

@@ -1,4 +1,27 @@
-from typing import Sequence, Optional
+import operator
+from typing import List, Optional, Sequence
+
+
+def _coerce_int(value, desc: str) -> int:
+    if isinstance(value, bool):
+        raise ValueError(f"{desc} must be integer, got bool")
+    try:
+        return operator.index(value)
+    except TypeError:
+        raise ValueError(
+            f"{desc} must be integer, got {type(value).__name__}"
+        ) from None
+
+
+def _coerce_non_negative_int(value, desc: str) -> int:
+    result = _coerce_int(value, desc)
+    if result < 0:
+        raise ValueError(f"{desc} must be non-negative integer, got {result}")
+    return result
+
+
+def _coerce_int_sequence(values: Sequence[int], desc: str) -> List[int]:
+    return [_coerce_int(v, f"{desc}[{i}]") for i, v in enumerate(values)]
 
 def _mat2_mul(A, B):
     return (
@@ -16,6 +39,11 @@ def _mat2_pow(A, n: int):
     return r
 
 def linrec2(n:int, a0:int, a1:int, p:int, q:int)->int:
+    n=_coerce_non_negative_int(n, "n")
+    a0=_coerce_int(a0, "a0")
+    a1=_coerce_int(a1, "a1")
+    p=_coerce_int(p, "p")
+    q=_coerce_int(q, "q")
     if n==0: return a0
     if n==1: return a1
     M=(p,q,1,0)
@@ -23,7 +51,12 @@ def linrec2(n:int, a0:int, a1:int, p:int, q:int)->int:
     return Mn1[0]*a1 + Mn1[1]*a0
 
 def linrec_k(n:int, coeffs:Sequence[int], init:Sequence[int])->int:
+    n=_coerce_non_negative_int(n, "n")
+    coeffs=list(_coerce_int_sequence(coeffs, "coeffs"))
+    init=list(_coerce_int_sequence(init, "init"))
     k=len(coeffs)
+    if k==0:
+        raise ValueError("coeffs must not be empty")
     if len(init)!=k: raise ValueError("init must have same length as coeffs")
     if n<k: return init[n]
     # companion matrix
@@ -49,7 +82,7 @@ def linrec2_array(ns: Sequence[int], a0:int, a1:int, p:int, q:int, *, numpy: Opt
         except Exception:
             numpy=None
     if numpy is None:
-        return [linrec2(int(n), a0, a1, p, q) for n in ns]
+        return [linrec2(n, a0, a1, p, q) for n in ns]
     np=numpy
     arr = np.asarray(ns, dtype=object)
-    return np.array([linrec2(int(n), a0, a1, p, q) for n in arr], dtype=object)
+    return np.array([linrec2(n, a0, a1, p, q) for n in arr], dtype=object)
