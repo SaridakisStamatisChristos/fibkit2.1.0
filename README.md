@@ -1,5 +1,8 @@
 # fibkit 2.1.0
 
+[![CI](https://github.com/yourname/fibkit/actions/workflows/ci.yml/badge.svg)](https://github.com/yourname/fibkit/actions/workflows/ci.yml)
+[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+
 Engineering-grade Fibonacci and Lucas toolkit for Python. **fibkit** combines mathematically sound implementations with production-friendly ergonomics so you can explore integer sequences, modular arithmetic, and general linear recurrences from a single package.
 
 ## Key features
