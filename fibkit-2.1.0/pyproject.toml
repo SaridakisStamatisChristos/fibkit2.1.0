@@ -12,8 +12,8 @@ dependencies = []
 numpy = ["numpy>=1.23"]
 
 [project.urls]
-Homepage = "https://github.com/yourname/fibkit"
-Repository = "https://github.com/yourname/fibkit"
+Homepage = "https://github.com/SaridakisStamatisChristos/fibkit2.1.0"
+Repository = "https://github.com/y/fibkit2.1.0"
 
 [project.scripts]
 fibkit = "fibkit.cli:main"
